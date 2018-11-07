@@ -11,6 +11,7 @@
 #define F_CPU 16E6
 #include <avr/sfr_defs.h>
 #define UBBRVAL 51
+#include <util/delay.h>
 
 
 
@@ -37,6 +38,7 @@ void led_init()
 {
 	DDRB |= _BV(DDB0);
 	DDRB |= _BV(DDD1);
+	DDRB |= _BV(DDD2);
 }
 
 unsigned char receive(void){
@@ -44,15 +46,15 @@ unsigned char receive(void){
 	loop_until_bit_is_set(UCSR0A, RXC0);
 	return UDR0;
 	//check wat er doorgestuurd wordt door python en zet daar de juiste led mee aan.
-	if(UDR0 == 0x31)
+	if(UDR0 == 0x6F)
 	{
-		PORTB = 0b00000001;
+		naar_boven();
 	}
-	if(UDR0 == 0x30)
+	if(UDR0 == 0x64)
 	{
-		PORTB = 0b00000010;
+		naar_beneden();
 	}
-	if(UDR0 == 0x32){
+	if(UDR0 == 0x73){
 		PORTB = 0b00000000;
 	}
 }
@@ -89,4 +91,24 @@ void UU_PutNumber(uint32_t x)
 	{
 		send(value[--i]);
 	}
+}
+
+void knipperlicht(uint8_t x){
+	while(x < 10){
+		PORTB |= 0b00000100;
+		_delay_ms(250);
+		PORTB &= 0b00000011;
+		_delay_ms(250);
+		x ++;
+	}
+}
+
+void naar_boven(){
+	PORTB = 0b00000001;
+	knipperlicht(0);
+}
+
+void naar_beneden(){
+	PORTB = 0b00000010;
+	knipperlicht(0);
 }
