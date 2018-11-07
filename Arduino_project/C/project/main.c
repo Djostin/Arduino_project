@@ -13,6 +13,9 @@ int temp();
 
 void setup(void){
 	DDRC = 0x00;
+	DDRB |= _BV(DDB0);
+	DDRB |= _BV(DDD1);
+	DDRB |= _BV(DDD2);
 }
 
 void adc_init()
