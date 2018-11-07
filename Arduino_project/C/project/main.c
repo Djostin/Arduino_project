@@ -86,6 +86,7 @@ int temp(){
 
 
 void send_data(void){
+	USART_putstring("x");
 	UU_PutNumber(licht_waarde());
 	UU_PutNumber(temp());
 }
