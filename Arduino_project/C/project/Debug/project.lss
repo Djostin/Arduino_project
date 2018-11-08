@@ -15,19 +15,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   5 .debug_aranges 000000e0  00000000  00000000  000008f8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000d97  00000000  00000000  000009d8  2**0
+  6 .debug_info   00000dac  00000000  00000000  000009d8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 0000099b  00000000  00000000  0000176f  2**0
+  7 .debug_abbrev 000009ba  00000000  00000000  00001784  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000778  00000000  00000000  0000210a  2**0
+  8 .debug_line   0000076e  00000000  00000000  0000213e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000238  00000000  00000000  00002884  2**2
+  9 .debug_frame  00000238  00000000  00000000  000028ac  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000595  00000000  00000000  00002abc  2**0
+ 10 .debug_str    00000595  00000000  00000000  00002ae4  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000553  00000000  00000000  00003051  2**0
+ 11 .debug_loc    00000553  00000000  00000000  00003079  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 000000c0  00000000  00000000  000035a4  2**0
+ 12 .debug_ranges 000000c0  00000000  00000000  000035cc  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -94,7 +94,7 @@ Disassembly of section .text:
   94:	a9 32       	cpi	r26, 0x29	; 41
   96:	b2 07       	cpc	r27, r18
   98:	e1 f7       	brne	.-8      	; 0x92 <.do_clear_bss_loop>
-  9a:	0e 94 12 02 	call	0x424	; 0x424 <main>
+  9a:	0e 94 11 02 	call	0x422	; 0x422 <main>
   9e:	0c 94 f7 03 	jmp	0x7ee	; 0x7ee <_exit>
 
 000000a2 <__bad_interrupt>:
@@ -456,12 +456,12 @@ ISR(TIMER1_COMPA_vect)
  216:	18 95       	reti
 
 00000218 <USART_init>:
-	knipperlicht(0);
-}
+int temp();
 
-void naar_beneden(){
-	PORTB = 0b00000010;
-	knipperlicht(0);
+// initiliseren van functies
+
+void setup(void){
+	DDRC = 0x00;
  218:	10 92 c5 00 	sts	0x00C5, r1	; 0x8000c5 <__TEXT_REGION_LENGTH__+0x7e00c5>
  21c:	83 e3       	ldi	r24, 0x33	; 51
  21e:	80 93 c4 00 	sts	0x00C4, r24	; 0x8000c4 <__TEXT_REGION_LENGTH__+0x7e00c4>
@@ -472,356 +472,354 @@ void naar_beneden(){
  22e:	80 93 c2 00 	sts	0x00C2, r24	; 0x8000c2 <__TEXT_REGION_LENGTH__+0x7e00c2>
  232:	08 95       	ret
 
-00000234 <send>:
- 234:	e0 ec       	ldi	r30, 0xC0	; 192
- 236:	f0 e0       	ldi	r31, 0x00	; 0
- 238:	90 81       	ld	r25, Z
- 23a:	95 ff       	sbrs	r25, 5
- 23c:	fd cf       	rjmp	.-6      	; 0x238 <send+0x4>
- 23e:	80 93 c6 00 	sts	0x00C6, r24	; 0x8000c6 <__TEXT_REGION_LENGTH__+0x7e00c6>
- 242:	08 95       	ret
+00000234 <led_init>:
+ 234:	20 9a       	sbi	0x04, 0	; 4
+ 236:	21 9a       	sbi	0x04, 1	; 4
+ 238:	22 9a       	sbi	0x04, 2	; 4
+ 23a:	08 95       	ret
 
-00000244 <USART_putstring>:
- 244:	cf 93       	push	r28
- 246:	df 93       	push	r29
- 248:	ec 01       	movw	r28, r24
- 24a:	88 81       	ld	r24, Y
- 24c:	88 23       	and	r24, r24
- 24e:	31 f0       	breq	.+12     	; 0x25c <USART_putstring+0x18>
- 250:	21 96       	adiw	r28, 0x01	; 1
- 252:	0e 94 1a 01 	call	0x234	; 0x234 <send>
- 256:	89 91       	ld	r24, Y+
- 258:	81 11       	cpse	r24, r1
- 25a:	fb cf       	rjmp	.-10     	; 0x252 <USART_putstring+0xe>
- 25c:	df 91       	pop	r29
- 25e:	cf 91       	pop	r28
- 260:	08 95       	ret
+0000023c <send>:
+ 23c:	e0 ec       	ldi	r30, 0xC0	; 192
+ 23e:	f0 e0       	ldi	r31, 0x00	; 0
+ 240:	90 81       	ld	r25, Z
+ 242:	95 ff       	sbrs	r25, 5
+ 244:	fd cf       	rjmp	.-6      	; 0x240 <send+0x4>
+ 246:	80 93 c6 00 	sts	0x00C6, r24	; 0x8000c6 <__TEXT_REGION_LENGTH__+0x7e00c6>
+ 24a:	08 95       	ret
 
-00000262 <UU_PutNumber>:
- 262:	8f 92       	push	r8
- 264:	9f 92       	push	r9
- 266:	af 92       	push	r10
- 268:	bf 92       	push	r11
- 26a:	ef 92       	push	r14
- 26c:	ff 92       	push	r15
- 26e:	0f 93       	push	r16
- 270:	1f 93       	push	r17
- 272:	cf 93       	push	r28
- 274:	df 93       	push	r29
- 276:	cd b7       	in	r28, 0x3d	; 61
- 278:	de b7       	in	r29, 0x3e	; 62
- 27a:	2a 97       	sbiw	r28, 0x0a	; 10
- 27c:	0f b6       	in	r0, 0x3f	; 63
- 27e:	f8 94       	cli
- 280:	de bf       	out	0x3e, r29	; 62
- 282:	0f be       	out	0x3f, r0	; 63
- 284:	cd bf       	out	0x3d, r28	; 61
- 286:	9e 01       	movw	r18, r28
- 288:	2f 5f       	subi	r18, 0xFF	; 255
- 28a:	3f 4f       	sbci	r19, 0xFF	; 255
- 28c:	79 01       	movw	r14, r18
- 28e:	00 e0       	ldi	r16, 0x00	; 0
- 290:	10 e0       	ldi	r17, 0x00	; 0
- 292:	0f 2e       	mov	r0, r31
- 294:	fa e0       	ldi	r31, 0x0A	; 10
- 296:	8f 2e       	mov	r8, r31
- 298:	91 2c       	mov	r9, r1
- 29a:	a1 2c       	mov	r10, r1
- 29c:	b1 2c       	mov	r11, r1
- 29e:	f0 2d       	mov	r31, r0
- 2a0:	0f 5f       	subi	r16, 0xFF	; 255
- 2a2:	1f 4f       	sbci	r17, 0xFF	; 255
- 2a4:	a5 01       	movw	r20, r10
- 2a6:	94 01       	movw	r18, r8
- 2a8:	0e 94 d5 03 	call	0x7aa	; 0x7aa <__udivmodsi4>
- 2ac:	60 5d       	subi	r22, 0xD0	; 208
- 2ae:	f7 01       	movw	r30, r14
- 2b0:	61 93       	st	Z+, r22
- 2b2:	7f 01       	movw	r14, r30
- 2b4:	62 2f       	mov	r22, r18
- 2b6:	73 2f       	mov	r23, r19
- 2b8:	84 2f       	mov	r24, r20
- 2ba:	95 2f       	mov	r25, r21
- 2bc:	61 15       	cp	r22, r1
- 2be:	71 05       	cpc	r23, r1
- 2c0:	81 05       	cpc	r24, r1
- 2c2:	91 05       	cpc	r25, r1
- 2c4:	69 f7       	brne	.-38     	; 0x2a0 <UU_PutNumber+0x3e>
- 2c6:	01 15       	cp	r16, r1
- 2c8:	11 05       	cpc	r17, r1
- 2ca:	89 f0       	breq	.+34     	; 0x2ee <UU_PutNumber+0x8c>
- 2cc:	ee 24       	eor	r14, r14
- 2ce:	e3 94       	inc	r14
- 2d0:	f1 2c       	mov	r15, r1
- 2d2:	ec 0e       	add	r14, r28
- 2d4:	fd 1e       	adc	r15, r29
- 2d6:	e0 0e       	add	r14, r16
- 2d8:	f1 1e       	adc	r15, r17
- 2da:	01 50       	subi	r16, 0x01	; 1
- 2dc:	11 09       	sbc	r17, r1
- 2de:	f7 01       	movw	r30, r14
- 2e0:	82 91       	ld	r24, -Z
- 2e2:	7f 01       	movw	r14, r30
- 2e4:	0e 94 1a 01 	call	0x234	; 0x234 <send>
- 2e8:	01 15       	cp	r16, r1
- 2ea:	11 05       	cpc	r17, r1
- 2ec:	b1 f7       	brne	.-20     	; 0x2da <UU_PutNumber+0x78>
- 2ee:	2a 96       	adiw	r28, 0x0a	; 10
- 2f0:	0f b6       	in	r0, 0x3f	; 63
- 2f2:	f8 94       	cli
- 2f4:	de bf       	out	0x3e, r29	; 62
- 2f6:	0f be       	out	0x3f, r0	; 63
- 2f8:	cd bf       	out	0x3d, r28	; 61
- 2fa:	df 91       	pop	r29
- 2fc:	cf 91       	pop	r28
- 2fe:	1f 91       	pop	r17
- 300:	0f 91       	pop	r16
- 302:	ff 90       	pop	r15
- 304:	ef 90       	pop	r14
- 306:	bf 90       	pop	r11
- 308:	af 90       	pop	r10
- 30a:	9f 90       	pop	r9
- 30c:	8f 90       	pop	r8
- 30e:	08 95       	ret
+0000024c <USART_putstring>:
+ 24c:	cf 93       	push	r28
+ 24e:	df 93       	push	r29
+ 250:	ec 01       	movw	r28, r24
+ 252:	88 81       	ld	r24, Y
+ 254:	88 23       	and	r24, r24
+ 256:	31 f0       	breq	.+12     	; 0x264 <USART_putstring+0x18>
+ 258:	21 96       	adiw	r28, 0x01	; 1
+ 25a:	0e 94 1e 01 	call	0x23c	; 0x23c <send>
+ 25e:	89 91       	ld	r24, Y+
+ 260:	81 11       	cpse	r24, r1
+ 262:	fb cf       	rjmp	.-10     	; 0x25a <USART_putstring+0xe>
+ 264:	df 91       	pop	r29
+ 266:	cf 91       	pop	r28
+ 268:	08 95       	ret
 
-00000310 <setup>:
-int temp();
+0000026a <UU_PutNumber>:
+ 26a:	8f 92       	push	r8
+ 26c:	9f 92       	push	r9
+ 26e:	af 92       	push	r10
+ 270:	bf 92       	push	r11
+ 272:	ef 92       	push	r14
+ 274:	ff 92       	push	r15
+ 276:	0f 93       	push	r16
+ 278:	1f 93       	push	r17
+ 27a:	cf 93       	push	r28
+ 27c:	df 93       	push	r29
+ 27e:	cd b7       	in	r28, 0x3d	; 61
+ 280:	de b7       	in	r29, 0x3e	; 62
+ 282:	2a 97       	sbiw	r28, 0x0a	; 10
+ 284:	0f b6       	in	r0, 0x3f	; 63
+ 286:	f8 94       	cli
+ 288:	de bf       	out	0x3e, r29	; 62
+ 28a:	0f be       	out	0x3f, r0	; 63
+ 28c:	cd bf       	out	0x3d, r28	; 61
+ 28e:	9e 01       	movw	r18, r28
+ 290:	2f 5f       	subi	r18, 0xFF	; 255
+ 292:	3f 4f       	sbci	r19, 0xFF	; 255
+ 294:	79 01       	movw	r14, r18
+ 296:	00 e0       	ldi	r16, 0x00	; 0
+ 298:	10 e0       	ldi	r17, 0x00	; 0
+ 29a:	0f 2e       	mov	r0, r31
+ 29c:	fa e0       	ldi	r31, 0x0A	; 10
+ 29e:	8f 2e       	mov	r8, r31
+ 2a0:	91 2c       	mov	r9, r1
+ 2a2:	a1 2c       	mov	r10, r1
+ 2a4:	b1 2c       	mov	r11, r1
+ 2a6:	f0 2d       	mov	r31, r0
+ 2a8:	0f 5f       	subi	r16, 0xFF	; 255
+ 2aa:	1f 4f       	sbci	r17, 0xFF	; 255
+ 2ac:	a5 01       	movw	r20, r10
+ 2ae:	94 01       	movw	r18, r8
+ 2b0:	0e 94 d5 03 	call	0x7aa	; 0x7aa <__udivmodsi4>
+ 2b4:	60 5d       	subi	r22, 0xD0	; 208
+ 2b6:	f7 01       	movw	r30, r14
+ 2b8:	61 93       	st	Z+, r22
+ 2ba:	7f 01       	movw	r14, r30
+ 2bc:	62 2f       	mov	r22, r18
+ 2be:	73 2f       	mov	r23, r19
+ 2c0:	84 2f       	mov	r24, r20
+ 2c2:	95 2f       	mov	r25, r21
+ 2c4:	61 15       	cp	r22, r1
+ 2c6:	71 05       	cpc	r23, r1
+ 2c8:	81 05       	cpc	r24, r1
+ 2ca:	91 05       	cpc	r25, r1
+ 2cc:	69 f7       	brne	.-38     	; 0x2a8 <UU_PutNumber+0x3e>
+ 2ce:	01 15       	cp	r16, r1
+ 2d0:	11 05       	cpc	r17, r1
+ 2d2:	89 f0       	breq	.+34     	; 0x2f6 <UU_PutNumber+0x8c>
+ 2d4:	ee 24       	eor	r14, r14
+ 2d6:	e3 94       	inc	r14
+ 2d8:	f1 2c       	mov	r15, r1
+ 2da:	ec 0e       	add	r14, r28
+ 2dc:	fd 1e       	adc	r15, r29
+ 2de:	e0 0e       	add	r14, r16
+ 2e0:	f1 1e       	adc	r15, r17
+ 2e2:	01 50       	subi	r16, 0x01	; 1
+ 2e4:	11 09       	sbc	r17, r1
+ 2e6:	f7 01       	movw	r30, r14
+ 2e8:	82 91       	ld	r24, -Z
+ 2ea:	7f 01       	movw	r14, r30
+ 2ec:	0e 94 1e 01 	call	0x23c	; 0x23c <send>
+ 2f0:	01 15       	cp	r16, r1
+ 2f2:	11 05       	cpc	r17, r1
+ 2f4:	b1 f7       	brne	.-20     	; 0x2e2 <UU_PutNumber+0x78>
+ 2f6:	2a 96       	adiw	r28, 0x0a	; 10
+ 2f8:	0f b6       	in	r0, 0x3f	; 63
+ 2fa:	f8 94       	cli
+ 2fc:	de bf       	out	0x3e, r29	; 62
+ 2fe:	0f be       	out	0x3f, r0	; 63
+ 300:	cd bf       	out	0x3d, r28	; 61
+ 302:	df 91       	pop	r29
+ 304:	cf 91       	pop	r28
+ 306:	1f 91       	pop	r17
+ 308:	0f 91       	pop	r16
+ 30a:	ff 90       	pop	r15
+ 30c:	ef 90       	pop	r14
+ 30e:	bf 90       	pop	r11
+ 310:	af 90       	pop	r10
+ 312:	9f 90       	pop	r9
+ 314:	8f 90       	pop	r8
+ 316:	08 95       	ret
 
-// initiliseren van functies
-
-void setup(void){
-	DDRC = 0x00;
- 310:	17 b8       	out	0x07, r1	; 7
-	DDRB |= _BV(DDB0);
- 312:	20 9a       	sbi	0x04, 0	; 4
-	DDRB |= _BV(DDD1);
- 314:	21 9a       	sbi	0x04, 1	; 4
-	DDRB |= _BV(DDD2);
- 316:	22 9a       	sbi	0x04, 2	; 4
- 318:	08 95       	ret
-
-0000031a <adc_init>:
+00000318 <adc_init>:
 }
 
 void adc_init()
 {
 	// AREF = AVcc
 	ADMUX = (1<<REFS0);
- 31a:	80 e4       	ldi	r24, 0x40	; 64
- 31c:	80 93 7c 00 	sts	0x007C, r24	; 0x80007c <__TEXT_REGION_LENGTH__+0x7e007c>
+ 318:	80 e4       	ldi	r24, 0x40	; 64
+ 31a:	80 93 7c 00 	sts	0x007C, r24	; 0x80007c <__TEXT_REGION_LENGTH__+0x7e007c>
 	
 	// ADC Enable and prescaler of 128
 	// 16000000/128 = 125000
 	ADCSRA = (1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);
- 320:	87 e8       	ldi	r24, 0x87	; 135
- 322:	80 93 7a 00 	sts	0x007A, r24	; 0x80007a <__TEXT_REGION_LENGTH__+0x7e007a>
- 326:	08 95       	ret
+ 31e:	87 e8       	ldi	r24, 0x87	; 135
+ 320:	80 93 7a 00 	sts	0x007A, r24	; 0x80007a <__TEXT_REGION_LENGTH__+0x7e007a>
+ 324:	08 95       	ret
 
-00000328 <adc_read>:
+00000326 <adc_read>:
 {
 	// select the corresponding channel 0~7
 	// ANDing with '7' will always keep the value
 	// of 'ch' between 0 and 7
 	ch &= 0b00000111;  // AND operation with 7
 	ADMUX = (ADMUX & 0xF8)|ch;     // clears the bottom 3 bits before ORing
- 328:	ec e7       	ldi	r30, 0x7C	; 124
- 32a:	f0 e0       	ldi	r31, 0x00	; 0
- 32c:	90 81       	ld	r25, Z
- 32e:	98 7f       	andi	r25, 0xF8	; 248
- 330:	87 70       	andi	r24, 0x07	; 7
- 332:	89 2b       	or	r24, r25
- 334:	80 83       	st	Z, r24
+ 326:	ec e7       	ldi	r30, 0x7C	; 124
+ 328:	f0 e0       	ldi	r31, 0x00	; 0
+ 32a:	90 81       	ld	r25, Z
+ 32c:	98 7f       	andi	r25, 0xF8	; 248
+ 32e:	87 70       	andi	r24, 0x07	; 7
+ 330:	89 2b       	or	r24, r25
+ 332:	80 83       	st	Z, r24
 	
 	// start single conversion
 	// write '1' to ADSC
 	ADCSRA |= (1<<ADSC);
- 336:	ea e7       	ldi	r30, 0x7A	; 122
- 338:	f0 e0       	ldi	r31, 0x00	; 0
- 33a:	80 81       	ld	r24, Z
- 33c:	80 64       	ori	r24, 0x40	; 64
- 33e:	80 83       	st	Z, r24
+ 334:	ea e7       	ldi	r30, 0x7A	; 122
+ 336:	f0 e0       	ldi	r31, 0x00	; 0
+ 338:	80 81       	ld	r24, Z
+ 33a:	80 64       	ori	r24, 0x40	; 64
+ 33c:	80 83       	st	Z, r24
 	
 	// wait for conversion to complete
 	// ADSC becomes '0' again
 	// till then, run loop continuously
 	while(ADCSRA & (1<<ADSC));
- 340:	80 81       	ld	r24, Z
- 342:	86 fd       	sbrc	r24, 6
- 344:	fd cf       	rjmp	.-6      	; 0x340 <adc_read+0x18>
+ 33e:	80 81       	ld	r24, Z
+ 340:	86 fd       	sbrc	r24, 6
+ 342:	fd cf       	rjmp	.-6      	; 0x33e <adc_read+0x18>
 	
 	return (ADC);
- 346:	80 91 78 00 	lds	r24, 0x0078	; 0x800078 <__TEXT_REGION_LENGTH__+0x7e0078>
- 34a:	90 91 79 00 	lds	r25, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x7e0079>
+ 344:	80 91 78 00 	lds	r24, 0x0078	; 0x800078 <__TEXT_REGION_LENGTH__+0x7e0078>
+ 348:	90 91 79 00 	lds	r25, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x7e0079>
 }
- 34e:	08 95       	ret
+ 34c:	08 95       	ret
 
-00000350 <licht_waarde>:
+0000034e <licht_waarde>:
 
 int licht_waarde(){
 	int result;
 	adc_result0 = adc_read(0);      // read adc value at PA0
- 350:	80 e0       	ldi	r24, 0x00	; 0
- 352:	0e 94 94 01 	call	0x328	; 0x328 <adc_read>
- 356:	90 93 28 01 	sts	0x0128, r25	; 0x800128 <adc_result0+0x1>
- 35a:	80 93 27 01 	sts	0x0127, r24	; 0x800127 <adc_result0>
+ 34e:	80 e0       	ldi	r24, 0x00	; 0
+ 350:	0e 94 93 01 	call	0x326	; 0x326 <adc_read>
+ 354:	90 93 28 01 	sts	0x0128, r25	; 0x800128 <adc_result0+0x1>
+ 358:	80 93 27 01 	sts	0x0127, r24	; 0x800127 <adc_result0>
 	if (adc_result0 < 150)
- 35e:	86 39       	cpi	r24, 0x96	; 150
- 360:	91 05       	cpc	r25, r1
- 362:	88 f0       	brcs	.+34     	; 0x386 <licht_waarde+0x36>
+ 35c:	86 39       	cpi	r24, 0x96	; 150
+ 35e:	91 05       	cpc	r25, r1
+ 360:	88 f0       	brcs	.+34     	; 0x384 <licht_waarde+0x36>
 	{
 		result = 0;
 		return result;
 	}
 	if (adc_result0 >150 && adc_result0 <300)
- 364:	9c 01       	movw	r18, r24
- 366:	27 59       	subi	r18, 0x97	; 151
- 368:	31 09       	sbc	r19, r1
- 36a:	25 39       	cpi	r18, 0x95	; 149
- 36c:	31 05       	cpc	r19, r1
- 36e:	70 f0       	brcs	.+28     	; 0x38c <licht_waarde+0x3c>
+ 362:	9c 01       	movw	r18, r24
+ 364:	27 59       	subi	r18, 0x97	; 151
+ 366:	31 09       	sbc	r19, r1
+ 368:	25 39       	cpi	r18, 0x95	; 149
+ 36a:	31 05       	cpc	r19, r1
+ 36c:	70 f0       	brcs	.+28     	; 0x38a <licht_waarde+0x3c>
 	{
 		result = 1;
 		return result;
 	}
 	if (adc_result0 >300 && adc_result0 <750)
- 370:	26 59       	subi	r18, 0x96	; 150
- 372:	31 09       	sbc	r19, r1
- 374:	21 3c       	cpi	r18, 0xC1	; 193
- 376:	31 40       	sbci	r19, 0x01	; 1
- 378:	60 f0       	brcs	.+24     	; 0x392 <licht_waarde+0x42>
+ 36e:	26 59       	subi	r18, 0x96	; 150
+ 370:	31 09       	sbc	r19, r1
+ 372:	21 3c       	cpi	r18, 0xC1	; 193
+ 374:	31 40       	sbci	r19, 0x01	; 1
+ 376:	60 f0       	brcs	.+24     	; 0x390 <licht_waarde+0x42>
 	{
 		result = 2;
 		return result;
 	}
 	if (adc_result0 > 750)
- 37a:	8f 3e       	cpi	r24, 0xEF	; 239
- 37c:	92 40       	sbci	r25, 0x02	; 2
- 37e:	60 f4       	brcc	.+24     	; 0x398 <licht_waarde+0x48>
+ 378:	8f 3e       	cpi	r24, 0xEF	; 239
+ 37a:	92 40       	sbci	r25, 0x02	; 2
+ 37c:	60 f4       	brcc	.+24     	; 0x396 <licht_waarde+0x48>
 	{
 		result = 3;
 		return result;
 	}
 	return result = 100;
- 380:	84 e6       	ldi	r24, 0x64	; 100
- 382:	90 e0       	ldi	r25, 0x00	; 0
- 384:	08 95       	ret
+ 37e:	84 e6       	ldi	r24, 0x64	; 100
+ 380:	90 e0       	ldi	r25, 0x00	; 0
+ 382:	08 95       	ret
 	int result;
 	adc_result0 = adc_read(0);      // read adc value at PA0
 	if (adc_result0 < 150)
 	{
 		result = 0;
 		return result;
- 386:	80 e0       	ldi	r24, 0x00	; 0
- 388:	90 e0       	ldi	r25, 0x00	; 0
- 38a:	08 95       	ret
+ 384:	80 e0       	ldi	r24, 0x00	; 0
+ 386:	90 e0       	ldi	r25, 0x00	; 0
+ 388:	08 95       	ret
 	}
 	if (adc_result0 >150 && adc_result0 <300)
 	{
 		result = 1;
 		return result;
- 38c:	81 e0       	ldi	r24, 0x01	; 1
- 38e:	90 e0       	ldi	r25, 0x00	; 0
- 390:	08 95       	ret
+ 38a:	81 e0       	ldi	r24, 0x01	; 1
+ 38c:	90 e0       	ldi	r25, 0x00	; 0
+ 38e:	08 95       	ret
 	}
 	if (adc_result0 >300 && adc_result0 <750)
 	{
 		result = 2;
 		return result;
- 392:	82 e0       	ldi	r24, 0x02	; 2
- 394:	90 e0       	ldi	r25, 0x00	; 0
- 396:	08 95       	ret
+ 390:	82 e0       	ldi	r24, 0x02	; 2
+ 392:	90 e0       	ldi	r25, 0x00	; 0
+ 394:	08 95       	ret
 	}
 	if (adc_result0 > 750)
 	{
 		result = 3;
 		return result;
- 398:	83 e0       	ldi	r24, 0x03	; 3
- 39a:	90 e0       	ldi	r25, 0x00	; 0
+ 396:	83 e0       	ldi	r24, 0x03	; 3
+ 398:	90 e0       	ldi	r25, 0x00	; 0
 	}
 	return result = 100;
 }
- 39c:	08 95       	ret
+ 39a:	08 95       	ret
 
-0000039e <temp>:
+0000039c <temp>:
 
 int temp(){
 	adc_result1 = adc_read(1);
- 39e:	81 e0       	ldi	r24, 0x01	; 1
- 3a0:	0e 94 94 01 	call	0x328	; 0x328 <adc_read>
- 3a4:	90 93 26 01 	sts	0x0126, r25	; 0x800126 <adc_result1+0x1>
- 3a8:	80 93 25 01 	sts	0x0125, r24	; 0x800125 <adc_result1>
+ 39c:	81 e0       	ldi	r24, 0x01	; 1
+ 39e:	0e 94 93 01 	call	0x326	; 0x326 <adc_read>
+ 3a2:	90 93 26 01 	sts	0x0126, r25	; 0x800126 <adc_result1+0x1>
+ 3a6:	80 93 25 01 	sts	0x0125, r24	; 0x800125 <adc_result1>
 	float voltage = adc_result1 * 5.0;
- 3ac:	bc 01       	movw	r22, r24
- 3ae:	80 e0       	ldi	r24, 0x00	; 0
- 3b0:	90 e0       	ldi	r25, 0x00	; 0
- 3b2:	0e 94 da 02 	call	0x5b4	; 0x5b4 <__floatunsisf>
- 3b6:	20 e0       	ldi	r18, 0x00	; 0
- 3b8:	30 e0       	ldi	r19, 0x00	; 0
- 3ba:	40 ea       	ldi	r20, 0xA0	; 160
- 3bc:	50 e4       	ldi	r21, 0x40	; 64
- 3be:	0e 94 68 03 	call	0x6d0	; 0x6d0 <__mulsf3>
+ 3aa:	bc 01       	movw	r22, r24
+ 3ac:	80 e0       	ldi	r24, 0x00	; 0
+ 3ae:	90 e0       	ldi	r25, 0x00	; 0
+ 3b0:	0e 94 da 02 	call	0x5b4	; 0x5b4 <__floatunsisf>
+ 3b4:	20 e0       	ldi	r18, 0x00	; 0
+ 3b6:	30 e0       	ldi	r19, 0x00	; 0
+ 3b8:	40 ea       	ldi	r20, 0xA0	; 160
+ 3ba:	50 e4       	ldi	r21, 0x40	; 64
+ 3bc:	0e 94 68 03 	call	0x6d0	; 0x6d0 <__mulsf3>
 	voltage /= 1024.0;
 	float temperatureC = (voltage - 0.5) * 10;
 	int temp_int = temperatureC * 100;
 	return temp_int;
- 3c2:	20 e0       	ldi	r18, 0x00	; 0
- 3c4:	30 e0       	ldi	r19, 0x00	; 0
- 3c6:	40 e8       	ldi	r20, 0x80	; 128
- 3c8:	5a e3       	ldi	r21, 0x3A	; 58
- 3ca:	0e 94 68 03 	call	0x6d0	; 0x6d0 <__mulsf3>
- 3ce:	20 e0       	ldi	r18, 0x00	; 0
- 3d0:	30 e0       	ldi	r19, 0x00	; 0
- 3d2:	40 e0       	ldi	r20, 0x00	; 0
- 3d4:	5f e3       	ldi	r21, 0x3F	; 63
- 3d6:	0e 94 37 02 	call	0x46e	; 0x46e <__subsf3>
- 3da:	20 e0       	ldi	r18, 0x00	; 0
- 3dc:	30 e0       	ldi	r19, 0x00	; 0
- 3de:	40 e2       	ldi	r20, 0x20	; 32
- 3e0:	51 e4       	ldi	r21, 0x41	; 65
- 3e2:	0e 94 68 03 	call	0x6d0	; 0x6d0 <__mulsf3>
- 3e6:	20 e0       	ldi	r18, 0x00	; 0
- 3e8:	30 e0       	ldi	r19, 0x00	; 0
- 3ea:	48 ec       	ldi	r20, 0xC8	; 200
- 3ec:	52 e4       	ldi	r21, 0x42	; 66
- 3ee:	0e 94 68 03 	call	0x6d0	; 0x6d0 <__mulsf3>
- 3f2:	0e 94 a4 02 	call	0x548	; 0x548 <__fixsfsi>
+ 3c0:	20 e0       	ldi	r18, 0x00	; 0
+ 3c2:	30 e0       	ldi	r19, 0x00	; 0
+ 3c4:	40 e8       	ldi	r20, 0x80	; 128
+ 3c6:	5a e3       	ldi	r21, 0x3A	; 58
+ 3c8:	0e 94 68 03 	call	0x6d0	; 0x6d0 <__mulsf3>
+ 3cc:	20 e0       	ldi	r18, 0x00	; 0
+ 3ce:	30 e0       	ldi	r19, 0x00	; 0
+ 3d0:	40 e0       	ldi	r20, 0x00	; 0
+ 3d2:	5f e3       	ldi	r21, 0x3F	; 63
+ 3d4:	0e 94 37 02 	call	0x46e	; 0x46e <__subsf3>
+ 3d8:	20 e0       	ldi	r18, 0x00	; 0
+ 3da:	30 e0       	ldi	r19, 0x00	; 0
+ 3dc:	40 e2       	ldi	r20, 0x20	; 32
+ 3de:	51 e4       	ldi	r21, 0x41	; 65
+ 3e0:	0e 94 68 03 	call	0x6d0	; 0x6d0 <__mulsf3>
+ 3e4:	20 e0       	ldi	r18, 0x00	; 0
+ 3e6:	30 e0       	ldi	r19, 0x00	; 0
+ 3e8:	48 ec       	ldi	r20, 0xC8	; 200
+ 3ea:	52 e4       	ldi	r21, 0x42	; 66
+ 3ec:	0e 94 68 03 	call	0x6d0	; 0x6d0 <__mulsf3>
+ 3f0:	0e 94 a4 02 	call	0x548	; 0x548 <__fixsfsi>
 }
- 3f6:	cb 01       	movw	r24, r22
- 3f8:	08 95       	ret
+ 3f4:	cb 01       	movw	r24, r22
+ 3f6:	08 95       	ret
 
-000003fa <send_data>:
+000003f8 <send_data>:
 
 
 void send_data(void){
 	USART_putstring("x");
- 3fa:	80 e0       	ldi	r24, 0x00	; 0
- 3fc:	91 e0       	ldi	r25, 0x01	; 1
- 3fe:	0e 94 22 01 	call	0x244	; 0x244 <USART_putstring>
+ 3f8:	80 e0       	ldi	r24, 0x00	; 0
+ 3fa:	91 e0       	ldi	r25, 0x01	; 1
+ 3fc:	0e 94 26 01 	call	0x24c	; 0x24c <USART_putstring>
 	UU_PutNumber(licht_waarde());
- 402:	0e 94 a8 01 	call	0x350	; 0x350 <licht_waarde>
- 406:	bc 01       	movw	r22, r24
- 408:	99 0f       	add	r25, r25
- 40a:	88 0b       	sbc	r24, r24
- 40c:	99 0b       	sbc	r25, r25
- 40e:	0e 94 31 01 	call	0x262	; 0x262 <UU_PutNumber>
+ 400:	0e 94 a7 01 	call	0x34e	; 0x34e <licht_waarde>
+ 404:	bc 01       	movw	r22, r24
+ 406:	99 0f       	add	r25, r25
+ 408:	88 0b       	sbc	r24, r24
+ 40a:	99 0b       	sbc	r25, r25
+ 40c:	0e 94 35 01 	call	0x26a	; 0x26a <UU_PutNumber>
 	UU_PutNumber(temp());
- 412:	0e 94 cf 01 	call	0x39e	; 0x39e <temp>
- 416:	bc 01       	movw	r22, r24
- 418:	99 0f       	add	r25, r25
- 41a:	88 0b       	sbc	r24, r24
- 41c:	99 0b       	sbc	r25, r25
- 41e:	0e 94 31 01 	call	0x262	; 0x262 <UU_PutNumber>
- 422:	08 95       	ret
+ 410:	0e 94 ce 01 	call	0x39c	; 0x39c <temp>
+ 414:	bc 01       	movw	r22, r24
+ 416:	99 0f       	add	r25, r25
+ 418:	88 0b       	sbc	r24, r24
+ 41a:	99 0b       	sbc	r25, r25
+ 41c:	0e 94 35 01 	call	0x26a	; 0x26a <UU_PutNumber>
+ 420:	08 95       	ret
 
-00000424 <main>:
+00000422 <main>:
+int temp();
+
+// initiliseren van functies
+
+void setup(void){
+	DDRC = 0x00;
+ 422:	17 b8       	out	0x07, r1	; 7
 }
 
 int main()
 {
 	setup();
- 424:	0e 94 88 01 	call	0x310	; 0x310 <setup>
+	led_init();
+ 424:	0e 94 1a 01 	call	0x234	; 0x234 <led_init>
 	adc_init();
- 428:	0e 94 8d 01 	call	0x31a	; 0x31a <adc_init>
+ 428:	0e 94 8c 01 	call	0x318	; 0x318 <adc_init>
 	USART_init();
  42c:	0e 94 0c 01 	call	0x218	; 0x218 <USART_init>
 	
@@ -832,7 +830,7 @@ int main()
  436:	51 e0       	ldi	r21, 0x01	; 1
  438:	60 e0       	ldi	r22, 0x00	; 0
  43a:	70 e0       	ldi	r23, 0x00	; 0
- 43c:	8f ec       	ldi	r24, 0xCF	; 207
+ 43c:	8e ec       	ldi	r24, 0xCE	; 206
  43e:	91 e0       	ldi	r25, 0x01	; 1
  440:	0e 94 53 00 	call	0xa6	; 0xa6 <SCH_Add_Task>
 	SCH_Add_Task(licht_waarde,0,300);
@@ -840,7 +838,7 @@ int main()
  446:	51 e0       	ldi	r21, 0x01	; 1
  448:	60 e0       	ldi	r22, 0x00	; 0
  44a:	70 e0       	ldi	r23, 0x00	; 0
- 44c:	88 ea       	ldi	r24, 0xA8	; 168
+ 44c:	87 ea       	ldi	r24, 0xA7	; 167
  44e:	91 e0       	ldi	r25, 0x01	; 1
  450:	0e 94 53 00 	call	0xa6	; 0xa6 <SCH_Add_Task>
 	SCH_Add_Task(send_data,0,600);
@@ -848,7 +846,7 @@ int main()
  456:	52 e0       	ldi	r21, 0x02	; 2
  458:	60 e0       	ldi	r22, 0x00	; 0
  45a:	70 e0       	ldi	r23, 0x00	; 0
- 45c:	8d ef       	ldi	r24, 0xFD	; 253
+ 45c:	8c ef       	ldi	r24, 0xFC	; 252
  45e:	91 e0       	ldi	r25, 0x01	; 1
  460:	0e 94 53 00 	call	0xa6	; 0xa6 <SCH_Add_Task>
 	
@@ -857,7 +855,7 @@ int main()
 	while(1){
 		SCH_Dispatch_Tasks();
  468:	0e 94 98 00 	call	0x130	; 0x130 <SCH_Dispatch_Tasks>
- 46c:	fd cf       	rjmp	.-6      	; 0x468 <main+0x44>
+ 46c:	fd cf       	rjmp	.-6      	; 0x468 <main+0x46>
 
 0000046e <__subsf3>:
  46e:	50 58       	subi	r21, 0x80	; 128
