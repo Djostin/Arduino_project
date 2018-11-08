@@ -13,9 +13,6 @@ int temp();
 
 void setup(void){
 	DDRC = 0x00;
-	DDRB |= _BV(DDB0);
-	DDRB |= _BV(DDD1);
-	DDRB |= _BV(DDD2);
 }
 
 void adc_init()
@@ -94,6 +91,7 @@ void send_data(void){
 int main()
 {
 	setup();
+	led_init();
 	adc_init();
 	USART_init();
 	
@@ -101,6 +99,7 @@ int main()
 	SCH_Add_Task(temp,0,400);
 	SCH_Add_Task(licht_waarde,0,300);
 	SCH_Add_Task(send_data,0,600);
+	SCH_Add_Task(receive,0,10);
 	
 	SCH_Start();
 	while(1){
