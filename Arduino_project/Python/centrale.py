@@ -205,7 +205,7 @@ class Grafieken(Frame):
 
 #**********************************************************************
         
-ser = serial.Serial('COM6', 19200)
+ser = serial.Serial('COM3', 19200)
 if(ser.is_open):
     pass
 else:

@@ -36,15 +36,17 @@ void USART_init(void){
 
 void led_init()
 {
-	DDRB |= _BV(DDB0);
-	DDRB |= _BV(DDD1);
-	DDRB |= _BV(DDD2);
+	DDRB = 0xFF;
 }
 
 unsigned char receive(void){
 	//check of bit is gezet en return de waarde.
-	while(!(UCSR0A & (1<<RXC0)));
-	return UDR0;
+	while(!(UCSR0A & (1<<RXC0))){
+		if(UDR0 == 0x35){
+			PORTB == 0xFF;
+		}
+		return UDR0;
+	}
 }
 
 // verzenden van data via UART
@@ -97,6 +99,6 @@ void naar_boven(){
 }
 
 void naar_beneden(){
-	PORTB = 0b00000010;
+	PORTB = 0b00000100;
 	knipperlicht(0);
 }
