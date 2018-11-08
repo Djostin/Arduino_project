@@ -43,20 +43,8 @@ void led_init()
 
 unsigned char receive(void){
 	//check of bit is gezet en return de waarde.
-	loop_until_bit_is_set(UCSR0A, RXC0);
-	
-	//check wat er doorgestuurd wordt door python en zet daar de juiste led mee aan.
-	if(UDR0 == 0x6F)
-	{
-		naar_boven();
-	}
-	if(UDR0 == 0x64)
-	{
-		naar_beneden();
-	}
-	if(UDR0 == 0x73){
-		PORTB = 0b00000000;
-	}
+	while(!(UCSR0A & (1<<RXC0)));
+	return UDR0;
 }
 
 // verzenden van data via UART

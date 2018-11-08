@@ -88,6 +88,21 @@ void send_data(void){
 	UU_PutNumber(temp());
 }
 
+void lichtcheck(receive){
+	//check wat er doorgestuurd wordt door python en zet daar de juiste led mee aan.
+	if(receive == 0x6F)
+	{
+		naar_boven();
+	}
+	if(receive == 0x64)
+	{
+		naar_beneden();
+	}
+	if(receive == 0x73){
+		PORTB = 0b00000000;
+	}
+}
+
 int main()
 {
 	setup();
@@ -96,15 +111,15 @@ int main()
 	USART_init();
 	
 	SCH_Init_T1();
+	SCH_Add_Task(lichtcheck,0,10);
 	SCH_Add_Task(temp,0,400);
 	SCH_Add_Task(licht_waarde,0,300);
 	SCH_Add_Task(send_data,0,600);
-	SCH_Add_Task(receive,0,10);
+	
 	
 	SCH_Start();
 	while(1){
 		SCH_Dispatch_Tasks();
-		receive();
 	}
 	return 0;
 }
