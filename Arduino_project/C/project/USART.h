@@ -44,7 +44,7 @@ void led_init()
 unsigned char receive(void){
 	//check of bit is gezet en return de waarde.
 	loop_until_bit_is_set(UCSR0A, RXC0);
-	return UDR0;
+	
 	//check wat er doorgestuurd wordt door python en zet daar de juiste led mee aan.
 	if(UDR0 == 0x6F)
 	{

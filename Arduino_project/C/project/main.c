@@ -104,6 +104,7 @@ int main()
 	SCH_Start();
 	while(1){
 		SCH_Dispatch_Tasks();
+		receive();
 	}
 	return 0;
 }
