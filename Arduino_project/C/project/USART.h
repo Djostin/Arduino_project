@@ -13,13 +13,15 @@
 #define UBBRVAL 51
 #include <util/delay.h>
 
-
+uint8_t receive_data;
+extern uint8_t receive_data;
 
 //Declaratie van functies
 void USART_init(void);
-unsigned char receive(void);
+void receive(void);
 void send( unsigned char data);
 void USART_putstring(char* StringPtr);
+
 
 void USART_init(void){
 	// set the baud rate
@@ -37,16 +39,7 @@ void USART_init(void){
 void led_init()
 {
 	DDRB = 0xFF;
-}
-
-unsigned char receive(void){
-	//check of bit is gezet en return de waarde.
-	while(!(UCSR0A & (1<<RXC0))){
-		if(UDR0 == 0x35){
-			PORTB == 0xFF;
-		}
-		return UDR0;
-	}
+	DDRD = 0xFF;
 }
 
 // verzenden van data via UART
@@ -99,6 +92,6 @@ void naar_boven(){
 }
 
 void naar_beneden(){
-	PORTB = 0b00000100;
+	PORTB = 0b00000010;
 	knipperlicht(0);
 }

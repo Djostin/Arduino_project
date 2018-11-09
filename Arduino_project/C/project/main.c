@@ -6,8 +6,8 @@
 
 //declareren variabelen.
 uint16_t adc_result0, adc_result1;
-/*int licht_voorkeur = 2;
-int bool = 0;*/
+int licht_voorkeur = 3;
+int bool = 0;
 
 
 // initiliseren van functies
@@ -89,60 +89,69 @@ void send_data(void){
 	UU_PutNumber(temp());
 }
 
-/*void lichtcheck(receive){
-	//check wat er doorgestuurd wordt door python en zet daar de juiste led mee aan.
-	if(receive == 0x6F)
-	{
-		naar_boven();
-		bool == 0;
+void receive(void){
+	int licht_test = licht_waarde();
+	while(UCSR0A & (1<<RXC0)){
+		uint8_t data = UDR0;
+		if((data == 0b01101111)&&(bool == 1))
+		{
+			bool = 0;
+			naar_boven();
+			
+		}
+		if((data == 0x64)&&(bool == 0))
+		{
+			bool = 1;
+			naar_beneden();
+			
+		}
+		if(data == 0x73){
+			PORTB = 0b00000000;
+		}
+		//licht voorkeur instellen
+		if (data == 0x77 ){
+			licht_voorkeur = 0;
+		}
+		if (data == 0x78){
+			licht_voorkeur = 1;
+		}
+		if (data == 0x79 ){
+			licht_voorkeur = 2;
+		}
+		
+		if (data == 0x7A ){
+			licht_voorkeur = 3;
+		}
+		//acties uit te voeren per licht voorkeur
+		if ((licht_voorkeur == licht_test) && (bool == 0))
+		{
+			bool = 1;
+			naar_beneden();
+			
+		}
+		if (licht_voorkeur == licht_test)
+		{ if ( bool == 0)
+		{
+			bool = 1;
+			naar_beneden();
+			
+		}
+		}
+		if ((licht_waarde == 3) && (bool == 0))
+		{
+			bool = 1;
+			naar_beneden();
+			
+		}
+		if(licht_waarde() == 1)
+		{if(bool==1){
+			bool = 0;
+			naar_boven();
+			
+		}
 	}
-	if(receive == 0x64)
-	{
-		naar_beneden();
-		bool == 1;
-	}
-	if(receive == 0x73){
-		PORTB = 0b00000000;
 	}
 }
-
-void licht_voorkeur_check(receive){
-	if (receive == 0x41 ){
-		licht_voorkeur = 0;
-	}
-	if (receive == 0x42){
-		licht_voorkeur = 1;
-	}
-	if (receive == 0x43 ){
-		licht_voorkeur = 2;
-	}
-	if (receive == 0x44 ){
-		licht_voorkeur = 3;
-	}
-}
-
-void gebruikers_voorkeur(licht_voorkeur, licht_waarde ,bool){
-	if (licht_voorkeur == 0 && licht_waarde ==0 && bool == 0)
-	{
-		naar_beneden();
-	}
-	if (licht_voorkeur == 1 && licht_waarde == 1&& bool == 0)
-	{
-		naar_beneden();
-	}
-	if (licht_voorkeur == 2 && licht_waarde == 2 && bool == 0)
-	{
-		naar_beneden();
-	}
-	if (licht_voorkeur == 3 && licht_waarde== 3 && bool == 0)
-	{
-		naar_beneden();
-	}
-	if(licht_waarde == 1 && bool == 1)
-	{	
-		naar_boven();
-	}
-}*/
 
 int main()
 {
@@ -152,18 +161,15 @@ int main()
 	USART_init();
 	
 	SCH_Init_T1();
-//	SCH_Add_Task(lichtcheck,0,10);
-//	SCH_Add_Task(licht_voorkeur_check,0,10);
 	SCH_Add_Task(temp,0,400);
 	SCH_Add_Task(licht_waarde,0,300);
 	SCH_Add_Task(send_data,0,600);
-//	SCH_Add_Task(gebruikers_voorkeur,0,600);
-	SCH_Add_Task(receive,0,10);
 	
 	
 	SCH_Start();
 	while(1){
 		SCH_Dispatch_Tasks();
+		receive();
 	}
 	return 0;
 }
