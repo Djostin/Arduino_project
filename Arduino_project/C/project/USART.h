@@ -13,13 +13,15 @@
 #define UBBRVAL 51
 #include <util/delay.h>
 
-
+uint8_t receive_data;
+extern uint8_t receive_data;
 
 //Declaratie van functies
 void USART_init(void);
-unsigned char receive(void);
+void receive(void);
 void send( unsigned char data);
 void USART_putstring(char* StringPtr);
+
 
 void USART_init(void){
 	// set the baud rate
@@ -36,27 +38,8 @@ void USART_init(void){
 
 void led_init()
 {
-	DDRB |= _BV(DDB0);
-	DDRB |= _BV(DDD1);
-	DDRB |= _BV(DDD2);
-}
-
-unsigned char receive(void){
-	//check of bit is gezet en return de waarde.
-	loop_until_bit_is_set(UCSR0A, RXC0);
-	return UDR0;
-	//check wat er doorgestuurd wordt door python en zet daar de juiste led mee aan.
-	if(UDR0 == 0x6F)
-	{
-		naar_boven();
-	}
-	if(UDR0 == 0x64)
-	{
-		naar_beneden();
-	}
-	if(UDR0 == 0x73){
-		PORTB = 0b00000000;
-	}
+	DDRB = 0xFF;
+	DDRD = 0xFF;
 }
 
 // verzenden van data via UART
